@@ -2,5 +2,5 @@
 .RData
 .DS_Store
 ._*
-/opentripplanner/graph/*
+opentripplanner/graph/*
 *.jar
