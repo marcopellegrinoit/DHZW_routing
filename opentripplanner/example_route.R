@@ -1,0 +1,26 @@
+library(opentripplanner)
+library(this.path)
+library(sf)
+setwd(this.dir())
+
+path_data = this.dir()
+path_otp <- paste0(path_data, '/otp-2.2.0-shaded.jar')
+
+otp_check_java(otp_version = 2.2)
+
+# Create the server
+otp_setup(otp = path_otp, dir = path_data, memory=12000, port = 8801, securePort = 8802)
+
+# Connect R to the server
+otpcon <- otp_connect(timezone = "Europe/London", port = 8801)
+
+
+from <- c(4.30518, 52.06850)
+to <- c(4.30738, 52.06929)
+
+route <- otp_plan(otpcon, 
+                  fromPlace = from, 
+                  toPlace = to,
+                  mode = "WALK")
+
+otp_stop()
