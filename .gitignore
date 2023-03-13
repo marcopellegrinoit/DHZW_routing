@@ -2,6 +2,8 @@
 .RData
 .DS_Store
 ._*
-opentripplanner/*
+data/*
 *.obj
 *.jar
+*.zip
+*.pbf
