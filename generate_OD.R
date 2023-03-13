@@ -3,7 +3,7 @@ library(dplyr)
 library(this.path)
 
 setwd(this.dir())
-setwd('../../DHZW_synthetic_population_to_Sim2APL/output')
+setwd('../DHZW_synthetic_population_to_Sim2APL/output')
 df_activities <- read.csv('DHZW_activities_locations.csv')
 
 df_activities$location_id = NA
@@ -27,13 +27,15 @@ df_asymmetric <- df_asymmetric %>%
   select(departure, arrival, departure_longitude, departure_latitude, arrival_longitude, arrival_latitude) %>%
   distinct(departure, arrival, .keep_all = TRUE)
 
-df_symmetric <- t(apply(df_asymmetric, 1, sort)) %>% as.data.frame()
+# symmetric OD
 
-# remove duplicate couples
-df_symmetric <- df_symmetric %>% 
-  distinct()
+df_symmetric <- df_asymmetric
+df_symmetric$combined_id <- ifelse(df_symmetric$departure < df_symmetric$arrival,
+                              paste(df_symmetric$departure, df_symmetric$arrival, sep="_"),
+                              paste(df_symmetric$arrival, df_symmetric$departure, sep="_"))
 
-colnames(df_symmetric) <- c('departure', 'arrival', 'departure_longitude', 'departure_latitude', 'arrival_longitude', 'arrival_latitude')
+df_symmetric <- df_symmetric[!duplicated(df_symmetric$combined_id), ]
+df_symmetric$combined_id <- NULL
 
 ################################################################################
 # Save
