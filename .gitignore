@@ -3,6 +3,7 @@
 .DS_Store
 ._*
 data/*
+output/*
 *.obj
 *.jar
 *.zip

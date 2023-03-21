@@ -6,27 +6,52 @@ setwd(this.dir())
 setwd('../DHZW_synthetic_population_to_Sim2APL/output')
 df_activities <- read.csv('DHZW_activities_locations.csv')
 
-df_activities$location_id = NA
-df_activities[df_activities$in_DHZW ==1,]$location_id <- df_activities[df_activities$in_DHZW ==1,]$PC5
-df_activities[df_activities$in_DHZW ==0,]$location_id <- df_activities[df_activities$in_DHZW ==0,]$PC4
-
 # calculate all possible trips origin-destination
-df_asymmetric <- df_activities %>%
-  select(pid, day_of_week, location_id, longitude, latitude)
+df_activities <- df_activities %>%
+  select(pid, day_of_week, postcode, coordinate_y, coordinate_x, in_DHZW)
 
-df_asymmetric <- df_asymmetric %>% 
+df_trips <- df_activities %>% 
   mutate(same_pid = ifelse(pid == lag(pid), 1, 0)) %>% # add flag is the previous person is the same
   mutate(same_day = ifelse(day_of_week == lag(day_of_week), 1, 0)) %>%# add flag is the previous day is the same
-  mutate(departure = lag(location_id)) %>% # copy the previous location ID
-  mutate(departure_longitude = lag(longitude)) %>%
-  mutate(departure_latitude = lag(latitude)) %>%
+  mutate(departure = lag(postcode)) %>% # copy the previous location ID
+  mutate(departure_y = lag(coordinate_y)) %>%
+  mutate(departure_x = lag(coordinate_x)) %>%
+  mutate(departure_in_DHZW = lag(in_DHZW)) %>%
   filter(same_pid==1 & same_day==1) %>% # filter only cases of same person and day
-  rename(arrival = location_id) %>%
-  rename(arrival_longitude = longitude) %>%
-  rename(arrival_latitude = latitude) %>%
-  select(departure, arrival, departure_longitude, departure_latitude, arrival_longitude, arrival_latitude) %>%
+  rename(arrival = postcode) %>%
+  rename(arrival_y = coordinate_y) %>%
+  rename(arrival_x = coordinate_x) %>%
+  rename(arrival_in_DHZW = in_DHZW) %>%
+  select(departure, arrival, departure_y, departure_x, arrival_y, arrival_x, departure_in_DHZW, arrival_in_DHZW) %>%
+  filter(!(departure_in_DHZW==arrival_in_DHZW)) %>% # only trips that go outside or come back
   distinct(departure, arrival, .keep_all = TRUE)
 
+################################################################################
+# All possible combinations of trips inside DHZW
+
+setwd(this.dir())
+setwd('../DHZW_shapefiles/data/processed/csv')
+df_PC5 <- read.csv('centroids_PC5_DHZW.csv')
+
+combinations_PC5 <- combn(df_PC5$PC5, 2)
+df_combinations_inside <- data.frame(departure = combinations_PC5[1, ], arrival = combinations_PC5[2, ])
+
+df_combinations_inside <- merge(df_combinations_inside, df_PC5, by.x = 'departure', by.y = 'PC5')
+df_combinations_inside <- df_combinations_inside %>%
+  rename(departure_y = coordinate_y,
+         departure_x = coordinate_x)
+
+df_combinations_inside <- merge(df_combinations_inside, df_PC5, by.x = 'arrival', by.y = 'PC5')
+df_combinations_inside <- df_combinations_inside %>%
+  rename(arrival_y = coordinate_y,
+         arrival_x = coordinate_x)
+
+df_combinations_inside$departure_in_DHZW <- 1
+df_combinations_inside$arrival_in_DHZW <- 1
+  
+df_asymmetric  <- rbind(df_trips, df_combinations_inside)
+
+################################################################################
 # symmetric OD
 
 df_symmetric <- df_asymmetric
