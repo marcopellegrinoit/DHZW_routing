@@ -33,7 +33,7 @@ df$distance_total <- NA
 df$distance_walk <- -NA
 df$distance_transit <- NA
 
-df$postcode_stop <- NA
+df$stop_PC6 <- NA
 
 start_time <- Sys.time()
 for (i in 1:nrow(df)){
@@ -129,10 +129,10 @@ for (i in 1:nrow(df)){
         if (found==TRUE) {
           print('found')
           print(postcode_bus_stop)
-          df[i,]$postcode_stop <- postcode_bus_stop
+          df[i,]$stop_PC6 <- postcode_bus_stop
         } else {
           print('no bus taken from DHZW')
-          df[i,]$postcode_stop <- -1
+          df[i,]$stop_PC6 <- -1
         }
       }
       
@@ -146,13 +146,18 @@ for (i in 1:nrow(df)){
       df[i,]$distance_total <- -1
       df[i,]$distance_walk <- -1
       df[i,]$distance_transit <- -1
-      df[i,]$postcode_stop <- -1
+      df[i,]$stop_PC6 <- -1
     }
     
   }, error = function(e) {
   })
   
 }
+
+df$stop_PC5 <- -1
+df[!is.na(df$stop_PC6) & df$stop_PC6 != -1 & df$stop_PC6 != 0,]$stop_PC5 <- gsub('.{1}$', '', df[!is.na(df$stop_PC6) & df$stop_PC6 != -1 & df$stop_PC6 != 0,]$stop_PC6)
+
+df[is.na(df$stop_PC6),]$stop_PC6 <- -1
 
 # for the ones that are not even doable by foot
 df[is.na(df$time_total),]$time_total <- -1
@@ -163,7 +168,6 @@ df[is.na(df$n_changes),]$n_changes <- -1
 df[is.na(df$distance_total),]$distance_total <- -1
 df[is.na(df$distance_walk),]$distance_walk <- -1
 df[is.na(df$distance_transit),]$distance_transit <- -1
-df[is.na(df$postcode_stop),]$postcode_stop <- -1
 
 # save
 setwd(this.dir())

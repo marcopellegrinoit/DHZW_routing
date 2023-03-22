@@ -38,14 +38,14 @@ df$distance_walk <- -NA
 df$distance_bus <- NA
 df$distance_train <- NA
 
-df$postcode_stop <- NA
+df$stop_PC6 <- NA
 
 # only for trips partially outside, and not completely outside
 df <- df[(df$departure_in_DHZW==1 & df$arrival_in_DHZW==0) | (df$departure_in_DHZW==0 & df$arrival_in_DHZW==1),]
 
 start_time <- Sys.time()
 
-for (i in 1:nrow(df)){
+for (i in 1:100){
   timer <- difftime(Sys.time(), start_time, units = "secs")
   print(paste0(round(((i/nrow(df))*100),2), '% - ', timer))
   
@@ -147,7 +147,7 @@ for (i in 1:nrow(df)){
       
       if (found==TRUE) {
         print('train via Moerwijk')
-        df[i,]$postcode_stop <- '2532CP'
+        df[i,]$stop_PC6 <- '2532CP'
       } else {
         print('no train via Moerwijk. So, I look if at least the individual takes a bus from within DHZW')
         
@@ -182,9 +182,9 @@ for (i in 1:nrow(df)){
             
             # take the postcode of the bus stop in DHZW
             if (nrow(geometry_point1)!=0){
-              df[i,]$postcode_stop <- geometry_point1$PC6
+              df[i,]$stop_PC6 <- geometry_point1$PC6
             } else {
-              df[i,]$postcode_stop <- geometry_point2$PC6
+              df[i,]$stop_PC6 <- geometry_point2$PC6
             }
           }
           
@@ -196,7 +196,7 @@ for (i in 1:nrow(df)){
           print(postcode_bus_stop)
         } else {
           print('Individual goes by train, but does not take any transport within DHZW')
-          df[i,]$postcode_stop <- 0
+          df[i,]$stop_PC6 <- 0
         }
         
       }
@@ -214,13 +214,19 @@ for (i in 1:nrow(df)){
       df[i,]$distance_walk <- -1
       df[i,]$distance_bus <- -1
       df[i,]$distance_train <- -1
-      df[i,]$postcode_stop <- -1
+      df[i,]$stop_PC6 <- -1
     }
     
   }, error = function(e) {
   })
   
 }
+
+# add PC5 of bus stop
+df$stop_PC5 <- -1
+df[!is.na(df$stop_PC6) & df$stop_PC6 != -1 & df$stop_PC6 != 0,]$stop_PC5 <- gsub('.{1}$', '', df[!is.na(df$stop_PC6) & df$stop_PC6 != -1 & df$stop_PC6 != 0,]$stop_PC6)
+
+df[is.na(df$stop_PC6),]$stop_PC6 <- -1
 
 # for the ones that are not even doable by foot
 df[is.na(df$time_total),]$time_total <- -1
@@ -233,7 +239,6 @@ df[is.na(df$distance_total),]$distance_total <- -1
 df[is.na(df$distance_walk),]$distance_walk <- -1
 df[is.na(df$distance_bus),]$distance_bus <- -1
 df[is.na(df$distance_train),]$distance_train <- -1
-df[is.na(df$postcode_stop),]$postcode_stop <- -1
 
 
 # save
