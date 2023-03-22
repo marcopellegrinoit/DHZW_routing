@@ -49,7 +49,7 @@ for (i in 1:nrow(df)){
                       fromPlace = from,
                       toPlace = to,
                       mode = c('WALK', 'BUS', 'TRAM', 'SUBWAY'),
-                      date_time = as.POSIXct(strptime("2023-03-08 12:00", "%Y-%m-%d %H:%M")),
+                      date_time = as.POSIXct(strptime("2023-02-09 08:00", "%Y-%m-%d %H:%M")),
                       arriveBy = FALSE,
     )
     
