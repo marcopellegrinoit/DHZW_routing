@@ -33,9 +33,14 @@ setwd(this.dir())
 setwd('../DHZW_shapefiles/data/processed/csv')
 df_PC5 <- read.csv('centroids_PC5_DHZW.csv')
 
-combinations_PC5 <- combn(df_PC5$PC5, 2)
-df_combinations_inside <- data.frame(departure = combinations_PC5[1, ], arrival = combinations_PC5[2, ])
+# generate combinations
+df_combinations_inside <- expand.grid(df_PC5$PC5, df_PC5$PC5)
+colnames(df_combinations_inside) <- c('departure', 'arrival')
 
+# remove same PC5
+df_combinations_inside <- df_combinations_inside[df_combinations_inside$departure != df_combinations_inside$arrival,]
+
+# add coordinates
 df_combinations_inside <- merge(df_combinations_inside, df_PC5, by.x = 'departure', by.y = 'PC5')
 df_combinations_inside <- df_combinations_inside %>%
   rename(departure_y = coordinate_y,

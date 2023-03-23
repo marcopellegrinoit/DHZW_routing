@@ -172,4 +172,4 @@ df[is.na(df$distance_transit),]$distance_transit <- -1
 # save
 setwd(this.dir())
 setwd('output')
-write.csv(df, 'bus_routing.csv', row.names = FALSE)
+write.csv(df, paste0('bus_routing',Sys.time(),'.csv'), row.names = FALSE)

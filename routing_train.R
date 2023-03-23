@@ -45,7 +45,7 @@ df <- df[(df$departure_in_DHZW==1 & df$arrival_in_DHZW==0) | (df$departure_in_DH
 
 start_time <- Sys.time()
 
-for (i in 1:100){
+for (i in 1:nrow(df)){
   timer <- difftime(Sys.time(), start_time, units = "secs")
   print(paste0(round(((i/nrow(df))*100),2), '% - ', timer))
   
@@ -244,4 +244,4 @@ df[is.na(df$distance_train),]$distance_train <- -1
 # save
 setwd(this.dir())
 setwd('output')
-write.csv(df, 'train_routing.csv', row.names = FALSE)
+write.csv(df, paste0('train_routing',Sys.time(),'.csv'), row.names = FALSE)
