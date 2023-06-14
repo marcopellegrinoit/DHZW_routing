@@ -2,8 +2,7 @@
 .RData
 .DS_Store
 ._*
-data/*
-output/*
+otp/*
 *.obj
 *.jar
 *.zip
