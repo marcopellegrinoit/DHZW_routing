@@ -9,6 +9,18 @@ setwd(this.dir())
 setwd('data')
 df <- read.csv('OD_asymmetric.csv')
 
+flag_new = TRUE
+if(flag_new) {
+  # read old output if already there
+  
+  setwd(this.dir())
+  setwd('output')
+  df_old <- read.csv('routing_bus.csv')
+  
+  # difference are the new ones to scrape
+  df <- anti_join(df, df_old, by = c("departure", "arrival"))
+}
+
 setwd(this.dir())
 setwd('../DHZW_shapefiles/data/processed/shapefiles')
 df_PC6_DHZW <- st_read('PC6_DHZW_shp')
@@ -161,37 +173,41 @@ calculate <- function (df) {
 setwd(this.dir())
 setwd('output')
 
+if (flag_new) {
+  df_1 <- df[1:5000,]
+  df_1 <- calculate(df_1)
+  nrow(df_1[is.na(df_1),])
+  write.csv(df_1, 'df_1.csv', row.names = FALSE)
+  
+  df_2 <- df[5001:10000,]
+  df_2 <- calculate(df_2)
+  nrow(df_2[is.na(df_2),])
+  write.csv(df_2, 'df_2.csv', row.names = FALSE)
+  
+  df_3 <- df[10001:15000,] 
+  df_3 <- calculate(df_3)
+  nrow(df_3[is.na(df_3),])
+  write.csv(df_3, 'df_3.csv', row.names = FALSE)
+  
+  df_4 <- df[15001:20000,] 
+  df_4 <- calculate(df_4)
+  nrow(df_4[is.na(df_4),])
+  write.csv(df_4, 'df_4.csv', row.names = FALSE)
+  
+  df_5 <- df[20001:nrow(df),] 
+  df_5 <- calculate(df_5)
+  nrow(df_5[is.na(df_5),])
+  write.csv(df_5, 'df_5.csv', row.names = FALSE)
+  
+  df <- rbind(df_1,
+              df_2,
+              df_3,
+              df_4,
+              df_5)
+} else {
+  df <- calculate(df)
+}
 
-df_1 <- df[1:5000,]
-df_1 <- calculate(df_1)
-nrow(df_1[is.na(df_1),])
-write.csv(df_1, 'df_1.csv', row.names = FALSE)
-
-df_2 <- df[5001:10000,]
-df_2 <- calculate(df_2)
-nrow(df_2[is.na(df_2),])
-write.csv(df_2, 'df_2.csv', row.names = FALSE)
-
-df_3 <- df[10001:15000,] 
-df_3 <- calculate(df_3)
-nrow(df_3[is.na(df_3),])
-write.csv(df_3, 'df_3.csv', row.names = FALSE)
-
-df_4 <- df[15001:20000,] 
-df_4 <- calculate(df_4)
-nrow(df_4[is.na(df_4),])
-write.csv(df_4, 'df_4.csv', row.names = FALSE)
-
-df_5 <- df[20001:nrow(df),] 
-df_5 <- calculate(df_5)
-nrow(df_5[is.na(df_5),])
-write.csv(df_5, 'df_5.csv', row.names = FALSE)
-
-df <- rbind(df_1,
-            df_2,
-            df_3,
-            df_4,
-            df_5)
 
 df$stop_PC5 <- '-1'
 df[!is.na(df$stop_PC6) & df$stop_PC6 != -1 & df$stop_PC6 != 0,]$stop_PC5 <- gsub('.{1}$', '', df[!is.na(df$stop_PC6) & df$stop_PC6 != -1 & df$stop_PC6 != 0,]$stop_PC6)
@@ -209,6 +225,9 @@ df[is.na(df$distance_transit),]$distance_transit <- -1
 
 df$feasible <- 1
 df[df$time_total==-1,]$feasible <- -1
+
+# add previously calculate entries
+df <- rbind(df, df_old)
 
 # save
 setwd(this.dir())

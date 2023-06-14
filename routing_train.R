@@ -16,6 +16,18 @@ setwd(this.dir())
 setwd('data')
 df <- read.csv('OD_asymmetric.csv')
 
+flag_new = TRUE
+if(flag_new) {
+  # read old output if already there
+  
+  setwd(this.dir())
+  setwd('output')
+  df_old <- read.csv('routing_train.csv')
+
+  # difference are the new ones to scrape
+  df <- anti_join(df, df_old, by = c("departure", "arrival"))
+}
+
 # Create the server
 #otp_setup(otp = path_otp, dir = path_data, memory=10000, port = 8801, securePort = 8802)
 
@@ -225,22 +237,27 @@ calculate <- function (df) {
   return(df)
 }
 
-setwd(this.dir())
-setwd('output/partial_train')
 
 
-df_1 <- df[1:5000,]
-df_1 <- calculate(df_1)
-nrow(df_1[is.na(df_1),])
-write.csv(df_1, 'df_1.csv', row.names = FALSE)
-
-df_2 <- df[5001:nrow(df),]
-df_2 <- calculate(df_2)
-nrow(df_2[is.na(df_2),])
-write.csv(df_2, 'df_2.csv', row.names = FALSE)
-
-df <- rbind(df_1,
-            df_2)
+if (flag_new) {
+  setwd(this.dir())
+  setwd('output/partial_train')
+  df_1 <- df[1:5000,]
+  df_1 <- calculate(df_1)
+  nrow(df_1[is.na(df_1),])
+  write.csv(df_1, 'df_1.csv', row.names = FALSE)
+  
+  df_2 <- df[5001:nrow(df),]
+  df_2 <- calculate(df_2)
+  nrow(df_2[is.na(df_2),])
+  write.csv(df_2, 'df_2.csv', row.names = FALSE)
+  
+  df <- rbind(df_1,
+              df_2)
+  
+} else {
+  df <- calculate(df)
+}
 
 # add PC5 of train or bus stop
 df$stop_PC5 <- '-1'
@@ -262,7 +279,12 @@ df[is.na(df$distance_train),]$distance_train <- -1
 df$feasible <- 1
 df[df$time_total==-1,]$feasible <- -1
 
+df <- df[0:1279,]
+
+# add previously calculate entries
+df <- rbind(df, df_old)
+
 # save
 setwd(this.dir())
 setwd('output')
-write.csv(routing_train, 'routing_train.csv', row.names = FALSE)
+write.csv(df, 'routing_train.csv', row.names = FALSE)
