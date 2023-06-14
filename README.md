@@ -17,10 +17,13 @@ Implemented means of transport:
 *   Walk
 *   Bike
 *   Car
-*   Bus/Tram/Underground + WALK
-*   Train + Bus/Tram/Underground + WALK
+*   Bus/Tram/Underground + Walk
+*   Train + Bus/Tram/Underground + Walk
 
 The code makes use of the R library OpenTripPlanner: Malcolm Morgan, Marcus Young, Robin Lovelace, Layik Hama (2019). "OpenTripPlanner for R." Journal of Open Source Software, 4(44), 1926. [doi:10.21105/joss.01926](https://doi.org/10.21105/joss.01926).
+
+OpenTripPlanner version used: [2.2.0](https://docs.opentripplanner.org/en/v2.2.0/)
+
 
 ## Usage
 
