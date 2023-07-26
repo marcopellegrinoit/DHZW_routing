@@ -6,13 +6,13 @@
 
 1.  [Description](#description)
 2.  [Usage](#usage)
-3.  [Contributors](#contributors)
-4.  [License](#license)
+3.  [Scraped Travel Information](#scraped-trave-information)
+4.  [Contributors](#contributors)
+5.  [License](#license)
 
 ## Description
 
-Repository of scripts to scrape routing information such as travel time and distance between visited postcodes of a given set of trips.  
-This project was undertaken at Utrecht University, The Netherlands, during 2022-2023 by Marco Pellegrino and a team of contributors.
+Repository of scripts to scrape routing information such as travel time and distance between visited postcodes of a given set of trips. This project was undertaken at Utrecht University, The Netherlands, during 2022-2023 by Marco Pellegrino and a team of contributors.
 
 Implemented means of transport:
 
@@ -46,7 +46,7 @@ R scripts leveraging the OpenTripPlanner R library have been developed. These sc
 *   [`routing_bus.R`](routing_bus.R). The script scrapes the travel information for buses and trams.
 *   [`routing_train.R`](routing_train.R). The script scrapes the travel information for trains, including trips that are also composed of legs of buses and/or trams.
 
-## Travel Information Available
+## Scraped Travel Information
 
 |   | **Walk** | **Bike** | **Car** | **Bus/Tram** | **Train + optionally Bus/Tram** |
 | --- | --- | --- | --- | --- | --- |
