@@ -35,7 +35,7 @@ The tool initially [creates a graph](build_graph.R) by combining the OpenStreetM
 Considering that the simulation includes trips that extend beyond the case-study area, data about the entirety of the Netherlands is used:  
 
 *   OpenStreetMap data from [Geofabrik](https://download.geofabrik.de/europe/netherlands.html)  
-    GTFS data from [Transitlan](https://www.transit.land/feeds/f-u-nl)
+*   GTFS data from [Transitlan](https://www.transit.land/feeds/f-u-nl)
 
 ## Usage
 
