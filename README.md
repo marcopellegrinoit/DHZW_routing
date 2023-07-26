@@ -60,7 +60,7 @@ R scripts leveraging the OpenTripPlanner R library have been developed. These sc
 | Distance by bus/tram (km) |   |   |   | x | x |
 | Distance by train (km) |   |   |   |   | x |
 | Number of changes |   |   |   | x | x |
-| PC6 bus/tram/train stop of leg crossing outside area |   |   |   | x | x |
+| Postcode PC6 bus/tram/train stop of leg crossing outside area |   |   |   | x | x |
 
 ## Contributors
 
