@@ -6,7 +6,7 @@
 
 1.  [Description](#description)
 2.  [Usage](#usage)
-3.  [Scraped Travel Information](#scraped-trave-information)
+3.  [Scraped Travel Information](#scraped-travel-information)
 4.  [Contributors](#contributors)
 5.  [License](#license)
 
